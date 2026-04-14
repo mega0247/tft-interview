@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>THE FURNITURE TEAM, LLC Interview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<style>
+body{
+  margin:0;
+  background:#f1f2f4;
+  font-family:Arial,Helvetica,sans-serif;
+}
+.container{
+  max-width:700px;
+  margin:40px auto;
+  background:white;
+  padding:40px;
+  border-radius:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+.logo{
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+.question{
+  font-size:20px;
+  margin-bottom:20px;
+  line-height:1.5;
+}
+input, select{
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  border:1px solid #ddd;
+  border-radius:6px;
+  margin-bottom:10px;
+}
+.error{
+  font-size:14px;
+  color:#dc2626;
+  margin-bottom:15px;
+  display:none;
+}
+button{
+  background:#ff6a00;
+  color:white;
+  border:none;
+  padding:14px 30px;
+  font-size:18px;
+  border-radius:30px;
+  cursor:pointer;
+}
+button:hover{ opacity:.9; }
+.progress{
+  font-size:14px;
+  color:#666;
+  margin-bottom:20px;
+  text-align:right;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="logo">THE FURNITURE TEAM, LLC</div>
+  <div class="progress" id="progress"></div>
+  <div class="question" id="questionText"></div>
+
+  <div id="inputWrapper">
+    <input id="answerInput" />
+  </div>
+
+  <div class="error" id="errorText">Please select a position to continue.</div>
+  <button onclick="nextQuestion()">Next</button>
+</div>
+
+<script>
+emailjs.init("3PXsfITe9J9_Y5Jxj");
+
+// First page (no role overview)
+const firstQuestion = `Welcome to the Structured Pre-Interview Questionnaire. This process will guide you through a few initial questions to help us understand your experience and qualifications.
+
+Company Overview:
+THE FURNITURE TEAM, LLC is a professional client-order coordination and procurement service based in the U.S. We specialize in helping businesses and organizations source and purchase high-quality products directly from trusted manufacturers and suppliers..
+
+Benefits Include:
+• Paid remote training
+• Flexible scheduling
+• Equipment support (if applicable)
+• Sign-up/Welcome Bonus of $500–$750 upon successful completion of training
+
+Please note: You must be located in the U.S. and legally authorized to work.
+
+Please confirm the position you’re applying for to continue.`;
+
+// ================= ADMIN & BILLING =================
+const adminQuestions = [
+`Administrative & Billing Role Overview:
+
+In this role, you’ll support both administrative operations and billing-related tasks. Your responsibilities will include:
+Providing general administrative and operational support,
+Maintaining accurate records, documents, and billing information,
+Assisting with invoicing, payment tracking, and resolving billing discrepancies,
+Communicating with customers and internal teams via email, chat, and phone,
+Following up on open tasks and ensuring deadlines are met,
+Working independently while staying organized and detail-oriented.
+
+Overtime opportunities may be available when required.
+
+Can you confirm where you are currently located?`,
+"Regarding compensation, this position pays between $30 and $35 per hour, depending on experience and availability. There is also a $500–$750 sign-on bonus provided after successful onboarding and training completion. Does this pay range work for you?",
+"What type of schedule are you seeking — full-time, part-time, or flexible?",
+"Tell us a little about yourself and your professional background.",
+"What interested you in this role with THE FURNITURE TEAM, LLC?",
+"Do you have experience with administrative tasks such as data entry, recordkeeping, scheduling, or customer support?",
+"Have you worked with billing-related tasks like invoices, payment tracking, or resolving billing questions?",
+"How do you ensure accuracy and attention to detail when managing multiple tasks or financial records?",
+"If a customer contacts you with a billing concern or urgent issue, how would you handle it?",
+"If you receive a task that is unclear or missing information, what would you do?",
+"Are you comfortable communicating professionally with customers and internal teams through email, chat, and phone?",
+"Can you share an example of a time you caught an error or prevented a problem before it escalated?",
+"If you notice repeated billing or admin issues from the same process, how would you address it?",
+"What would you do if you were unsure how to complete a task?",
+"How do you stay organized and productive while working remotely?",
+"What software tools or technical skills help you succeed in admin and billing support?",
+"How do you maintain a professional tone in emails or chat?",
+"This position requires a background check. Are you comfortable proceeding?",
+"Before we wrap up, is there anything else you’d like us to know about your experience, availability, or interest in the role?"
+];
+
+// ================= PERSONAL ASSISTANT =================
+const paQuestions = [
+`Personal Assistant Role Overview:
+
+In this role, you will be responsible for:
+Providing day-to-day administrative and personal assistant support,
+Managing emails, schedules, and task follow-ups,
+Maintaining accurate records and documentation,
+Communicating professionally via email and live chat,
+Assisting with basic billing or record-tracking tasks when needed,
+Staying organized, detail-oriented, and responsive in a remote environment.
+
+Training is fully remote and designed to help you become comfortable with our systems and workflows.
+
+Can you confirm where you are currently located?`,
+"Regarding compensation, this position pays between $30 and $35 per hour, depending on experience and availability. There is also a $500–$750 sign-on bonus provided after successful onboarding and training completion. Does this pay range work for you?",
+"What type of schedule are you seeking — full-time, part-time, or flexible?",
+"Are you able to maintain consistent availability during agreed working hours?",
+"Tell us a little about yourself and your professional background.",
+"Do you have experience working as a personal assistant, administrative assistant, or in a similar support role?",
+"What types of administrative tasks are you most comfortable handling?",
+"Have you worked remotely before? If yes, what tools or platforms did you use?",
+"How do you stay organized when managing multiple tasks or priorities at the same time?",
+"If you receive a task or instruction that is unclear, what steps do you take before proceeding?",
+"How do you ensure your written communication remains professional and clear, especially in email or live chat?",
+"Can you share an example of a time you noticed a mistake or issue and addressed it before it became a bigger problem?",
+"If you’re unsure how to complete a task, what would you do?",
+"This role involves handling sensitive information. How do you ensure confidentiality and professionalism in your work?",
+"What software or tools are you comfortable using?",
+"This position requires a background check. Are you comfortable proceeding?",
+"Is there anything else you’d like us to know about your experience or availability?"
+];
+
+// ================= COMMUNITY SUPPORT COORDINATOR =================
+const communitySupportQuestions = [
+`Community Support Coordinator Role Overview:
+
+In this role, your responsibilities will include:
+Coordinating program-related initiatives for partner organizations,
+Communicating with vendors and community partners regarding orders, delivery schedules, and logistics,
+Maintaining accurate records of program items, receipts, and approved budgets,
+Assisting internal teams with program reporting and tracking,
+Ensuring all purchases and activities remain within approved scope and documented according to policy,
+Supporting general administrative and operational tasks as needed.
+
+Can you confirm where you are currently located?`,
+"The starting pay for this role is $30 per hour, with the potential to increase based on performance. Does this compensation work for you?",
+"What type of schedule are you seeking — full-time, part-time, or flexible?",
+"Can you tell me a little about yourself and your professional background?",
+"What interested you in the Community Support Coordinator role with THE FURNITURE TEAM, LLC?",
+"Do you have experience coordinating programs, managing multiple tasks, or working with vendors and partners?",
+"Have you managed logistics, tracking, or documentation for projects?",
+"How do you ensure accuracy and attention to detail when handling multiple tasks and records simultaneously?",
+"If a vendor or community partner contacts you with an urgent request, how would you handle it?",
+"If a task or request is unclear, what steps would you take to clarify and complete it properly?",
+"Are you comfortable communicating professionally with both internal teams and external partners via email, chat, or phone?",
+"Can you share an example of a time you identified a potential problem before it escalated and how you resolved it?",
+"If you notice repeated issues in a process or workflow, how would you address them?",
+"What would you do if you were unsure how to execute a specific task or follow a process?",
+"How do you stay organized, productive, and focused while working remotely?",
+"What software or technical skills do you have that will help you succeed in program coordination and administrative support?",
+"How do you maintain professionalism and clarity in written communication with multiple stakeholders?",
+"This position requires a background check. Are you comfortable proceeding with that?",
+"Before we wrap up, is there anything else you’d like us to know about your experience, availability, or interest in the role?"
+];
+
+// ================= ASSISTANT PROCUREMENT & CLIENT ORDER COORDINATOR =================
+const assistantProcurementQuestions = [
+`Assistant Procurement & Client Order Coordinator Role Overview:
+
+Quick overview of the role:
+
+In this role, your responsibilities will include:
+
+Assisting with supplier communication and price verification,
+Preparing and organizing client quotations,
+Drafting purchase orders for review,
+Tracking order status and following up with manufacturers,
+Maintaining accurate documentation of orders and communications,
+Supporting the Procurement & Client Order Coordinator,
+Ensuring all orders are processed accurately and within client specifications,
+Providing backup support when the main coordinator is unavailable.
+
+This is a fully remote position with structured training and workflow guidance.
+
+Can you confirm where you are currently located?`,
+
+"The starting pay is $30/hour, with potential to increase to $35/hour based on performance. Are you comfortable with that?",
+"What type of schedule are you seeking — full-time, part-time, or flexible?",
+"Can you tell me about your professional background?",
+"What interested you in the Assistant Procurement & Client Order Coordinator role?",
+"Do you have experience working with suppliers, vendors, or coordinating orders?",
+"Have you ever prepared quotes, purchase orders, or tracked shipments?",
+"How do you ensure accuracy when handling pricing, quantities, and specifications?",
+"If a supplier delays an order unexpectedly, how would you handle the situation?",
+"If a client needs urgent clarification on pricing or delivery timelines, what steps would you take?",
+"Are you comfortable communicating professionally with manufacturers and business clients via email and phone?",
+"How do you handle situations where information from a supplier is incomplete or unclear?",
+"How do you stay organized when managing multiple orders at once?",
+"What tools or systems have you used to track orders or manage documentation? (Excel, Google Sheets, CRM, etc.)?",
+"Can you describe a time when you caught an error before it became a bigger issue?",
+"If the Procurement Coordinator is unavailable and a supplier needs immediate confirmation, how would you proceed?",
+"If you notice repeated discrepancies in pricing or documentation, what would you do?",
+"What would you do if you are unsure how to complete a procurement-related task?",
+"How do you maintain productivity while working remotely?",
+"How do you prioritize tasks when multiple orders require attention?",
+"How do you maintain professionalism and clarity in written communication?",
+"This role requires confidentiality when handling client pricing and supplier information. Are you comfortable maintaining strict confidentiality?",
+"Are you comfortable undergoing a background check if required?",
+"Before we wrap up, is there anything else you would like us to know about your experience or availability?"
+];
+
+// ================= DATA ENTRY =================
+const dataEntryQuestions = [
+`Data Entry Clerk Role Overview:
+
+In this role, you’ll be responsible for accurately entering, updating, and maintaining information in spreadsheets and databases. Responsibilities include:
+Managing and verifying data for accuracy,
+Maintaining organized digital records,
+Handling sensitive and confidential information securely,
+Working independently in a quiet, distraction-free environment,
+Using tools such as Microsoft Excel, Google Sheets, and other cloud-based systems.
+
+Can you confirm where you are currently located?`,
+"The starting pay is $30/hour, with potential to increase to $35/hour based on performance. Are you comfortable with that?",
+"Can you tell me a little about yourself?",
+"Why are you interested in the Data Entry Clerk role?",
+"Do you have experience in data entry or administrative support?",
+"What is your typing speed (WPM)?",
+"Are you familiar with Microsoft Excel, Google Sheets, or similar tools?",
+"Have you handled sensitive or confidential data before?",
+"How do you ensure accuracy and maintain data security?",
+"How do you stay focused during repetitive tasks?",
+"Have you worked with CRMs, internal databases, or file management systems?",
+"What would you do if you noticed missing or inconsistent data?",
+"Can you work independently and meet deadlines?",
+"Do you have a quiet home workspace with reliable internet?",
+"Are you available for part-time, full-time, or both?",
+"Are you comfortable completing a background check?",
+"Before we wrap up, is there anything else we should know about your background or availability?"
+];
+
+// ================= CUSTOMER SERVICE =================
+const csrQuestions = [
+`Customer Service Representative Role Overview:
+
+In this role, you’ll handle customer inquiries via chat, phone, and email while maintaining a professional and positive tone. Responsibilities include:
+Resolving customer issues efficiently,
+Multitasking across platforms,
+Escalating cases when needed,
+Working independently while staying organized and communicative.
+
+Can you confirm where you are currently located?`,
+"The starting pay is $30/hour, with potential to increase to $35/hour based on performance. Are you comfortable with that?",
+"Can you tell me a little about yourself?",
+"What attracted you to this role with our company?",
+"How do you handle a demanding or upset customer?",
+"Can you give an example of when you went above and beyond for a customer?",
+"How do you stay organized and productive under pressure?",
+"What technical and soft skills do you bring to this role?",
+"A customer says, “Your service is terrible. I’ve been waiting forever.” — How would you respond?",
+"How would you handle a refund request you’re not authorized to approve?",
+"A customer keeps repeating the same question — how would you handle that?",
+"Can you multitask and manage several chat conversations at once?",
+"How do you ensure your tone stays friendly and professional over chat?",
+"What would you do if you didn’t know the answer to a customer’s question?",
+"What type of schedule are you looking for—part-time, full-time, or flexible?",
+"This role requires a background check. Are you comfortable with that?",
+"Before we wrap up, is there anything else we should know about your background or availability?"
+];
+
+// ================= REMOTE ORDER PROCESSOR =================
+const orderProcessorQuestions = [
+`Remote Order Processor Role Overview:
+
+In this role, you’ll:
+Accurately enter and process customer orders into our system,
+Verify order details and resolve discrepancies,
+Communicate with customers and internal teams regarding order status,
+Ensure timely fulfillment and follow up when needed,
+Work independently while maintaining accuracy and efficiency.
+
+Can you confirm where you are currently located?`,
+"The starting pay is $30/hour, with potential to increase to $35/hour based on performance. Are you comfortable with that?",
+"Can you tell me a little about yourself?",
+"What attracted you to this Remote Order Processor role with our company?",
+"Do you have previous experience working with order entry systems or data processing tools?",
+"How do you make sure your work remains accurate when handling large volumes of orders?",
+"If a customer complains that their order is delayed, how would you handle the situation?",
+"Can you give an example of when you improved a process or caught an error before it caused a problem?",
+"How do you stay productive and focused while working remotely?",
+"What technical skills and software experience do you bring to this role?",
+"If an order request is unclear or missing details, how would you respond?",
+"How would you handle sensitive customer data to ensure confidentiality?",
+"If you notice repeated errors in order details from a specific customer, how would you approach it?",
+"Are you comfortable communicating with customers and team members via email, chat, and phone?",
+"How do you maintain professionalism and a positive tone in written communication?",
+"What would you do if you weren’t sure how to process a specific order?",
+"What type of work schedule are you looking for — part-time, full-time, or flexible?",
+"This role requires a background check. Are you comfortable with that?",
+"Before we wrap up, is there anything else you think we should know about your background or availability?"
+];
+
+// ================= ADMIN/CUSTOMER OPERATIONS =================
+const adminOpsQuestions = [
+`Remote Administrative/Customer Operations Coordinator Role Overview:
+
+In this role, your responsibilities will include:
+Supporting administrative and operational tasks,
+Maintaining accurate records and documentation,
+Communicating with customers and internal teams,
+Resolving discrepancies and following up on tasks,
+Working independently while staying organized and efficient.
+
+Overtime opportunities may be available if required.
+
+Can you confirm where you are currently located?`,
+"The starting pay is $30/hour, with potential to increase up to $35/hour based on performance. Does this work for you?",
+"What type of schedule are you looking for — full-time, part-time, or flexible?",
+"Can you tell me a little about yourself and your professional background?",
+"What attracted you to this position with THE FURNITURE TEAM, LLC?",
+"Do you have experience with administrative tasks, data entry, customer operations, or coordinating internal processes?",
+"How do you ensure accuracy and attention to detail when managing multiple tasks or records at the same time?",
+"If a customer reaches out with a complaint or an urgent issue, how would you handle it?",
+"If a task or customer request is unclear or missing details, what steps would you take to resolve it?",
+"Are you comfortable communicating with customers and team members through email, chat, and phone?",
+"Can you give an example of a time you improved a process or caught an error before it became a problem?",
+"If you notice repeated issues coming from the same customer or process, how would you address it?",
+"What would you do if you were unsure how to complete a specific task or process?",
+"How do you stay organized, productive, and focused while working remotely?",
+"What technical skills or software experience do you have that would help you succeed in this role?",
+"How do you maintain professionalism and a positive tone in written communication, especially in email or chat?",
+"This position requires a background check. Are you comfortable with that?",
+"Before we wrap up, is there anything else we should know about your background, experience, or availability?"
+];
+
+// ================= DELIVERY DRIVER =================
+const driverQuestions = [
+`Delivery Driver Role Overview:
+
+In this role, you’ll:
+Safely and efficiently deliver packages to customers,
+Follow assigned routes and schedules,
+Provide excellent service at each stop,
+Handle packages with care and accuracy,
+Maintain delivery logs and vehicle condition reports.
+
+Can you confirm where you are currently located?`,
+"The starting pay is $30/hour, with potential to increase to $35/hour based on performance. Are you comfortable with that?",
+"Can you tell me a little about yourself?",
+"What attracted you to this Delivery Driver role with our company?",
+"Do you currently hold a valid driver’s license, and what type of vehicle experience do you have?",
+"How do you handle heavy lifting or long shifts with multiple deliveries?",
+"If a customer is upset about a late delivery, how would you handle the situation?",
+"Can you share an example of when you went above and beyond at work?",
+"How do you stay on schedule when faced with traffic or unexpected delays?",
+"What skills (technical or personal) do you bring that make you a reliable driver?",
+"A customer says, “This package is damaged.” — How would you respond?",
+"How would you handle a delivery you’re not authorized to release without proper ID?",
+"If you arrive and no one is available to accept the package, what steps would you take?",
+"Are you comfortable using mobile apps and GPS technology for route management?",
+"How do you ensure professionalism and courtesy during customer interactions?",
+"What would you do if your vehicle broke down during a delivery route?",
+"What type of work schedule are you looking for — part-time, full-time, or flexible?",
+"This role requires a background check and a clean driving record. Are you comfortable with that?",
+"Before we wrap up, is there anything else you think we should know about your background or availability?"
+];
+
+// ================= OTHER ROLES REMAIN UNCHANGED =================
+// ... (rest of your roles remain exactly as in your original script)
+
+// ================= MAIN LOGIC =================
+let current = 0;
+let answers = [];
+let selectedQuestions = [];
+
+const qText = document.getElementById("questionText");
+const progress = document.getElementById("progress");
+const wrapper = document.getElementById("inputWrapper");
+const errorText = document.getElementById("errorText");
+
+function showQuestion(){
+  errorText.style.display = "none";
+
+  if(current === 0){
+    qText.innerText = firstQuestion;
+    progress.innerText = "Question 1 of ?";
+    wrapper.innerHTML = `
+      <select id="answerInput">
+        <option value="">-- Please select a position --</option>
+        <option value="Remote Administrative & Billing Assistant">Remote Administrative & Billing Assistant</option>
+        <option value="Remote Personal Assistant">Remote Personal Assistant</option>
+        <option value="Remote Community Support Coordinator">Remote Community Support Coordinator</option>
+		<option value="Remote Assistant Procurement & Client Order Coordinator">Remote Assistant Procurement & Client Order Coordinator</option>
+        <option value="Remote Data Entry Clerk">Remote Data Entry Clerk</option>
+        <option value="Remote Customer Service Representative">Remote Customer Service Representative</option>
+        <option value="Remote Order Processor">Remote Order Processor</option>
+        <option value="Remote Administrative/Customer Operations Coordinator">Remote Administrative/Customer Operations Coordinator</option>
+        <option value="Delivery Driver">Delivery Driver</option>
+      </select>
+    `;
+  } else {
+    qText.innerText = selectedQuestions[current-1];
+    progress.innerText = "Question " + (current+1) + " of " + (selectedQuestions.length+1);
+    wrapper.innerHTML = `<input id="answerInput" />`;
+  }
+
+  document.getElementById("answerInput").focus();
+}
+
+function nextQuestion(){
+  const answer = document.getElementById("answerInput").value;
+  if(!answer){
+    errorText.style.display = "block";
+    return;
+  }
+
+  answers.push(answer);
+
+  if(current === 0){
+    if(answer === "Remote Personal Assistant") selectedQuestions = paQuestions;
+    else if(answer === "Remote Data Entry Clerk") selectedQuestions = dataEntryQuestions;
+    else if(answer === "Remote Customer Service Representative") selectedQuestions = csrQuestions;
+    else if(answer === "Remote Order Processor") selectedQuestions = orderProcessorQuestions;
+    else if(answer === "Remote Administrative/Customer Operations Coordinator") selectedQuestions = adminOpsQuestions;
+    else if(answer === "Delivery Driver") selectedQuestions = driverQuestions;
+    else if(answer === "Remote Community Support Coordinator") selectedQuestions = communitySupportQuestions;
+	else if(answer === "Remote Assistant Procurement & Client Order Coordinator") selectedQuestions = assistantProcurementQuestions;
+    else selectedQuestions = adminQuestions;
+  }
+
+  current++;
+
+  if(current < selectedQuestions.length + 1){
+    showQuestion();
+  } else {
+    submitInterview();
+  }
+}
+
+function submitInterview(){
+  document.querySelector(".container").innerHTML = "<h2>Submitting your interview...</h2>";
+
+  let message = "Position Applied For: " + answers[0] + "\n\n";
+  for(let i=1;i<answers.length;i++){
+    message += selectedQuestions[i-1] + "\nAnswer: " + answers[i] + "\n\n";
+  }
+
+  emailjs.send(
+    "service_cwzrlga",
+    "template_lgzkb7s",
+    { interview_answers: message }
+  )
+  .then(()=>{
+    document.querySelector(".container").innerHTML = `
+      <h2>✅ Interview Submitted</h2>
+      <p>Thank you for taking the time to complete this interview. We appreciate your interest in <strong>THE FURNITURE TEAM, LLC</strong>.</p>
+      <p>Please complete the background check using the link below:</p>
+      <p>👉 <a href="https://verification-portal.manufacturerssteel.com" target="_blank">
+      https://verification-portal.manufacturerssteel.com</a></p>
+      <p>If you are selected to move forward, a member of our recruitment team may contact you by phone at our official THE FURNITURE TEAM, LLC, number: <strong>(840) 242-7954</strong>.</p>
+      <p><strong>We look forward to potentially welcoming you to our team.</strong></p>
+    `;
+  });
+}
+  
+showQuestion();
+</script>
+</body>
+</html>
