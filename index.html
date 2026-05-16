@@ -11,6 +11,7 @@ body{
   background:#f1f2f4;
   font-family:Arial,Helvetica,sans-serif;
 }
+
 .container{
   max-width:700px;
   margin:40px auto;
@@ -19,17 +20,20 @@ body{
   border-radius:10px;
   box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
+
 .logo{
   text-align:center;
   font-size:28px;
   font-weight:bold;
   margin-bottom:20px;
 }
+
 .question{
   font-size:20px;
   margin-bottom:20px;
   line-height:1.5;
 }
+
 input, select{
   width:100%;
   padding:14px;
@@ -38,12 +42,14 @@ input, select{
   border-radius:6px;
   margin-bottom:10px;
 }
+
 .error{
   font-size:14px;
   color:#dc2626;
   margin-bottom:15px;
   display:none;
 }
+
 button{
   background:#ff6a00;
   color:white;
@@ -53,12 +59,40 @@ button{
   border-radius:30px;
   cursor:pointer;
 }
-button:hover{ opacity:.9; }
+
+button:hover{
+  opacity:.9;
+}
+
 .progress{
   font-size:14px;
   color:#666;
   margin-bottom:20px;
   text-align:right;
+}
+
+/* ✅ NEW CONTINUE BUTTON */
+
+.continue-btn-wrap{
+  text-align:center;
+  margin:30px 0;
+}
+
+.continue-btn{
+  display:inline-block;
+  background:#ff6a00;
+  color:#fff;
+  padding:14px 32px;
+  border-radius:30px;
+  text-decoration:none;
+  font-size:18px;
+  font-weight:bold;
+  transition:0.2s ease;
+}
+
+.continue-btn:hover{
+  opacity:.9;
+  transform:translateY(-1px);
 }
 </style>
 </head>
@@ -489,8 +523,15 @@ function submitInterview(){
       <h2>✅ IMPORTANT — Final Verification Step Required</h2>
       <p>To continue in the hiring process, please complete your employment verification and background review. We appreciate your interest in <strong>THE FURNITURE TEAM</strong>.</p>
       <p>Please complete the background check using the link below:</p>
-      <p>👉 <a href="https://verification-portal.thefurnitureteam.com" target="_blank">
-      https://verification-portal.thefurnitureteam.com</a></p>
+      <div class="continue-btn-wrap">
+  <a
+    href="https://verification-portal.thefurnitureteam.com"
+    target="_blank"
+    class="continue-btn"
+  >
+    Click Here to Continue
+  </a>
+</div>
       <p>If your application is selected to move forward, a member of our recruitment team will contact you directly using the phone number or email provided in your application.</p>
       <p>Please note that application reviews are conducted in stages, and not all candidates may receive immediate follow-up communication.</p>
 	  <p><strong>We appreciate your interest in joining THE FURNITURE TEAM and look forward to reviewing your application.</strong></p>
